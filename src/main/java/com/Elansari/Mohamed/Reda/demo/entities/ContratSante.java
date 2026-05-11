@@ -7,6 +7,6 @@ import lombok.*;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class ContratSante extends ContratAssurance {
     @Enumerated(EnumType.STRING)
-    private NiveauCouverture niveauCouverture; [cite: 19]
-    private Integer nombrePersonnesCouvertes; [cite: 20]
+    private NiveauCouverture niveauCouverture;
+    private Integer nombrePersonnesCouvertes;
 }

@@ -8,14 +8,14 @@ import java.time.LocalDate;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Paiement {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; [cite: 21]
-    private LocalDate date; [cite: 21]
-    private Double montant; [cite: 21]
+    private Long id;
+    private LocalDate date;
+    private Double montant;
 
     @Enumerated(EnumType.STRING)
-    private TypePaiement type; [cite: 21]
+    private TypePaiement type;
 
     @ManyToOne
     @JoinColumn(name = "contrat_id")
-    private ContratAssurance contrat; [cite: 10]
+    private ContratAssurance contrat;
 }
