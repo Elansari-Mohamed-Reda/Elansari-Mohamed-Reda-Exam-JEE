@@ -27,12 +27,22 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDTO getClientById(Long id) {
-        Client client = clientRepository.findById(id).orElseThrow(() -> new RuntimeException("Client not found"));
+        Client client = clientRepository.findById(id).orElseThrow(() -> new RuntimeException("Client non trouvé avec l'ID: " + id));
         return clientMapper.toDto(client);
     }
 
     @Override
+    public List<ClientDTO> getAllClients() {
+        return clientRepository.findAll().stream()
+                .map(clientMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<ContratDTO> getContratsByClientId(Long clientId) {
+        if (!clientRepository.existsById(clientId)) {
+            throw new RuntimeException("Client non trouvé avec l'ID: " + clientId);
+        }
         return contratRepository.findByClientId(clientId).stream()
                 .map(contrat -> {
                     ContratDTO dto = new ContratDTO();
@@ -47,5 +57,21 @@ public class ClientServiceImpl implements ClientService {
     public ClientDTO saveClient(ClientDTO clientDTO) {
         Client client = clientMapper.toEntity(clientDTO);
         return clientMapper.toDto(clientRepository.save(client));
+    }
+
+    @Override
+    public ClientDTO updateClient(Long id, ClientDTO clientDTO) {
+        Client client = clientRepository.findById(id).orElseThrow(() -> new RuntimeException("Client non trouvé avec l'ID: " + id));
+        client.setNom(clientDTO.getNom());
+        client.setEmail(clientDTO.getEmail());
+        return clientMapper.toDto(clientRepository.save(client));
+    }
+
+    @Override
+    public void deleteClient(Long id) {
+        if (!clientRepository.existsById(id)) {
+            throw new RuntimeException("Client non trouvé avec l'ID: " + id);
+        }
+        clientRepository.deleteById(id);
     }
 }

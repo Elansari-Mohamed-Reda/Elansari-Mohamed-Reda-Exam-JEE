@@ -25,15 +25,41 @@ public class PaiementServiceImpl implements PaiementService {
     public PaiementDTO savePaiement(PaiementDTO dto) {
         Paiement entity = paiementMapper.toEntity(dto);
         if (dto.getContratId() != null) {
-            entity.setContrat(contratRepository.findById(dto.getContratId()).orElse(null));
+            entity.setContrat(contratRepository.findById(dto.getContratId())
+                    .orElseThrow(() -> new RuntimeException("Contrat non trouvé avec l'ID: " + dto.getContratId())));
         }
         return paiementMapper.toDto(paiementRepository.save(entity));
     }
 
     @Override
+    public PaiementDTO getPaiementById(Long id) {
+        Paiement paiement = paiementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paiement non trouvé avec l'ID: " + id));
+        return paiementMapper.toDto(paiement);
+    }
+
+    @Override
+    public List<PaiementDTO> getAllPaiements() {
+        return paiementRepository.findAll().stream()
+                .map(paiementMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<PaiementDTO> getPaiementsByContrat(Long contratId) {
+        if (!contratRepository.existsById(contratId)) {
+            throw new RuntimeException("Contrat non trouvé avec l'ID: " + contratId);
+        }
         return paiementRepository.findByContratId(contratId).stream()
                 .map(paiementMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deletePaiement(Long id) {
+        if (!paiementRepository.existsById(id)) {
+            throw new RuntimeException("Paiement non trouvé avec l'ID: " + id);
+        }
+        paiementRepository.deleteById(id);
     }
 }
